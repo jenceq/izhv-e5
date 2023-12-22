@@ -212,9 +212,24 @@ public class Character2DMovement : MonoBehaviour
 	     *   * Persistent heading flag: *mHeadingRight*
 	     *   * Rotating a local rotation by an axis: localRotation *= Quaternion.Euler(...)
 	     */
-	    
+	    if (mInput.move.x < 0)
+	    {
+		    if (mHeadingRight)
+		    {
+			    transform.localRotation *= Quaternion.Euler(0, 180, 0);
+		    }
+		    mHeadingRight = false;
+	    }
+	    else if (mInput.move.x > 0)
+	    {
+		    if (!mHeadingRight)
+		    {
+			    transform.localRotation *= Quaternion.Euler(0, -180, 0);
+		    }
+		    mHeadingRight = true;
+	    }
 	    var animator = mSelector.charAnimator;
-	    if (animator != null)
+	    if (animator)
 	    {
 			var currentVerticalSpeed = mController.velocity.y;
 			var currentHorizontalSpeed = new Vector3(mController.velocity.x, 0.0f, mController.velocity.z).magnitude;
@@ -226,7 +241,7 @@ public class Character2DMovement : MonoBehaviour
 			var grounded = mController.isGrounded;
 			var jump = mInput.jump;
 			var falling = !mController.isGrounded && mFallTimeoutDelta <= 0.0f;
-
+			
 			/*
 			 * Task #1a: Passing properties to the Animator
 			 * 
@@ -265,6 +280,22 @@ public class Character2DMovement : MonoBehaviour
 			 *   * Current Animator instance: *animator*
 			 *   * Animator methods: *SetFloat* and *SetBool*
 			 */
+			animator.SetFloat("Speed", speed);
+			animator.SetFloat("MoveSpeed", moveSpeed);
+			animator.SetBool("Jump", jump);
+			animator.SetBool("Grounded", grounded);
+			animator.SetBool("Fall", falling);
+			if (crouch)
+			{
+				animator.SetBool("Crouch", crouch);
+			}
+			else
+			{
+				animator.SetBool("Crouch", false);
+			}
+
+
+
 	    }
     }
 }
